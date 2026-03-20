@@ -799,15 +799,15 @@ code {
 <!-- FASE 7 -->
 <div class="phase animate-in delay-4">
   <div class="phase-header" onclick="togglePhase(this)">
-    <div class="phase-number">6</div>
+    <div class="phase-number">7</div>
     <div class="phase-meta">
-      <div class="phase-title">Vibe coding met Claude Code</div>
+      <div class="phase-title">Diverse extra sites en cursussen</div>
       <div class="phase-duration">Overige</div>
     </div>
     <div class="phase-chevron">▾</div>
   </div>
   <div class="phase-body">
-    <p class="phase-intro">Vibe coding is het bouwen van werkende applicaties door gewoon in gewone taal te beschrijven wat je wilt — zonder zelf code te schrijven. Claude Code is het gereedschap van Anthropic dat dit mogelijk maakt: het leest je projectmap, schrijft bestanden, voert commando's uit en debugt zelfstandig. Voor een data analist betekent dit: van idee tot werkende tool in een middag, in plaats van weken. De platforms Netlify, Cloudflare en Supabase zijn de infrastructuur waarop je die apps publiceert en draait.</p>
+    <p class="phase-intro"></p>
     <div class="tasks">
 
       <div class="task">
@@ -821,78 +821,9 @@ code {
         </div>
       </div>
 
-      <div class="task">
-        <button class="check-btn" onclick="toggleTask(this)">✓</button>
-        <div class="task-content">
-          <div class="task-title">Lees: Vibe Coding Best Practices Guide <span class="badge">Anthropic artifact · 2025</span></div>
-          <div class="task-desc">Anthropic's eigen gids over hoe je effectief vibe codet met Claude Code: hoe je instructies structureert, wanneer je ingrijpt, en hoe je voorkomt dat Claude "off the rails" gaat. Essentieel voordat je serieus begint.</div>
-          <div class="task-links">
-            <a href="https://claudelog.com/faqs/what-is-vibe-coding/" target="_blank" class="task-link terra">→ Vibe Coding gids (ClaudeLog)</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="task">
-        <button class="check-btn" onclick="toggleTask(this)">✓</button>
-        <div class="task-content">
-          <div class="task-title">Mini-project: Bouw een data-dashboard in één sessie</div>
-          <div class="task-desc">Maak een leeg project-mapje. Open Claude Code. Beschrijf in gewone taal wat je wilt: "Bouw een HTML-pagina die een CSV-bestand inleest en de data weergeeft als grafiek." Laat Claude het volledig uitwerken. Observeer hoe het denkt en bestanden aanmaakt. Grijp in wanneer het de verkeerde kant opgaat.</div>
-          <div class="task-links">
-            <a href="https://cgstrategylab.com/detailed-claude-code-vibe-coding-guide/" target="_blank" class="task-link terra">→ Complete beginner-gids Claude Code</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="task">
-        <button class="check-btn" onclick="toggleTask(this)">✓</button>
-        <div class="task-content">
-          <div class="task-title">Platform: Netlify — je app online zetten in één klik <span class="badge">gratis tier</span></div>
-          <div class="task-desc">Netlify is de eenvoudigste manier om een app die Claude Code heeft gebouwd, online te zetten. Koppel je GitHub-repository en elke nieuwe versie die je pusht wordt automatisch gepubliceerd. Gratis tier is ruim genoeg voor persoonlijke projecten en prototypes. Claude Code kent Netlify's configuratie en kan de <code>netlify.toml</code> voor je schrijven.</div>
-          <div class="task-links">
-            <a href="https://netlify.com" target="_blank" class="task-link terra">→ netlify.com (gratis)</a>
-            <a href="https://docs.netlify.com" target="_blank" class="task-link moss">→ Netlify docs</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="task">
-        <button class="check-btn" onclick="toggleTask(this)">✓</button>
-        <div class="task-content">
-          <div class="task-title">Platform: Cloudflare Pages & Workers — sneller en globaal <span class="badge">gratis tier</span></div>
-          <div class="task-desc">Cloudflare Pages is een alternatief voor Netlify — met dezelfde eenvoud maar gebouwd op Cloudflare's wereldwijde netwerk (300+ locaties). Cloudflare Workers voegt serverless backend-logica toe. Ideaal als je app ook API-calls doet of data transformeert. Combineer met Supabase voor een volledige gratis stack.</div>
-          <div class="task-links">
-            <a href="https://pages.cloudflare.com" target="_blank" class="task-link terra">→ Cloudflare Pages</a>
-            <a href="https://workers.cloudflare.com" target="_blank" class="task-link moss">→ Cloudflare Workers</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="task">
-        <button class="check-btn" onclick="toggleTask(this)">✓</button>
-        <div class="task-content">
-          <div class="task-title">Platform: Supabase — database + auth voor je app <span class="badge">gratis tier · PostgreSQL</span></div>
-          <div class="task-desc">Supabase geeft je een volledige PostgreSQL-database, gebruikersauthenticatie, bestandsopslag en realtime updates — allemaal via een eenvoudige API. Als data analist herken je de SQL-laag meteen. Claude Code weet hoe Supabase werkt en kan de koppeling voor je schrijven. Werkt naadloos samen met zowel Netlify als Cloudflare.</div>
-          <div class="task-links">
-            <a href="https://supabase.com" target="_blank" class="task-link terra">→ supabase.com (gratis)</a>
-            <a href="https://supabase.com/docs" target="_blank" class="task-link moss">→ Supabase docs</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="task">
-        <button class="check-btn" onclick="toggleTask(this)">✓</button>
-        <div class="task-content">
-          <div class="task-title">Eindproject: Bouw en publiceer een volledige data-tool</div>
-          <div class="task-desc">Combineer alles: gebruik Claude Code om een werkende webapp te bouwen die data opslaat in Supabase, gepubliceerd wordt via Netlify of Cloudflare, en een eenvoudige interface heeft. Denk aan een intern rapportage-dashboard, een formulier dat data opslaat, of een tool die CSV-uploads analyseert. Je hebt de hele stack nu in handen.</div>
-          <div class="task-links">
-            <a href="https://developers.cloudflare.com/workers/databases/third-party-integrations/supabase/" target="_blank" class="task-link terra">→ Cloudflare + Supabase integratie</a>
-            <a href="https://docs.netlify.com/extend/install-and-use/setup-guides/supabase-integration/" target="_blank" class="task-link moss">→ Netlify + Supabase integratie</a>
-          </div>
-        </div>
-      </div>
-
+      
     </div>
-    <div class="tip-box"><strong>💡 Tip:</strong> Maak altijd een <code>CLAUDE.md</code> bestand in je projectmap — dit is Claude Code's "geheugen" voor dat project. Schrijf daarin: welk framework je gebruikt, wat de stijlrichtlijnen zijn, en wat Claude <em>niet</em> mag aanpassen. Dit voorkomt de meeste "off the rails" situaties en maakt elke sessie consistenter.</div>
+    <div class="tip-box"><strong>💡 Tip:</strong> </div>
   </div>
 </div>
 
