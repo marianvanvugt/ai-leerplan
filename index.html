@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Leerplan — Data Analist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lato:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-base:        #F7F3EE;
+  --bg-surface:     #EFE9E0;
+  --bg-elevated:    #E8DFCF;
+  --text-primary:   #2C2416;
+  --text-secondary: #6B5744;
+  --text-muted:     #A89080;
+  --text-inverse:   #F7F3EE;
+  --accent-terra:   #C17A54;
+  --accent-terra-hover: #A8633F;
+  --accent-moss:    #6B8C5A;
+  --accent-clay:    #D4956A;
+  --border-soft:    rgba(107, 87, 68, 0.15);
+  --border-medium:  rgba(107, 87, 68, 0.28);
+  --shadow-sm:      0 2px 8px rgba(44, 36, 22, 0.08);
+  --shadow-md:      0 6px 24px rgba(44, 36, 22, 0.12);
+  --radius-md:  14px;
+  --radius-lg:  22px;
+  --radius-xl:  32px;
+  --radius-pill: 999px;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body:    'Lato', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --ease-soft:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+@keyframes softRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: softRise 480ms var(--ease-soft) both; }
+.delay-1 { animation-delay: 80ms; }
+.delay-2 { animation-delay: 160ms; }
+.delay-3 { animation-delay: 240ms; }
+.delay-4 { animation-delay: 320ms; }
+
+header {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 40px 48px 36px;
+}
+.header-inner { max-width: 860px; margin: 0 auto; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-terra);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  line-height: 1.15;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+h1 em { font-style: italic; color: var(--accent-terra); }
+
+.subtitle {
+  margin-top: 12px;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 580px;
+}
+
+.progress-bar-wrap {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-terra), var(--accent-clay));
+  border-radius: var(--radius-pill);
+  width: 0%;
+  transition: width 0.5s var(--ease-smooth);
+}
+.progress-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.usage-hint {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 48px 80px;
+}
+
+.phase {
+  margin-bottom: 36px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-surface);
+  transition: box-shadow 280ms var(--ease-smooth);
+}
+.phase:hover { box-shadow: var(--shadow-md); }
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 32px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-surface);
+  transition: background 160ms;
+}
+.phase-header:hover { background: var(--bg-elevated); }
+
+.phase-number {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.phase-meta { flex: 1; }
+.phase-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+.phase-duration {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.phase-chevron {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  transition: transform 280ms var(--ease-smooth);
+}
+.phase.open .phase-chevron { transform: rotate(180deg); }
+
+.phase-body {
+  display: none;
+  padding: 0 32px 32px;
+  border-top: 1px solid var(--border-soft);
+}
+.phase.open .phase-body { display: block; }
+
+.phase-intro {
+  padding-top: 24px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+
+/* Tasks */
+.tasks { display: flex; flex-direction: column; gap: 14px; }
+
+.task {
+  display: flex;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  transition: border-color 200ms;
+}
+.task:hover { border-color: var(--border-medium); }
+.task.done { opacity: 0.52; }
+.task.done .task-title { text-decoration: line-through; color: var(--text-muted); }
+
+/* Check button — the ONLY thing that toggles done state */
+.check-btn {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border-medium);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: transparent;
+  margin-top: 2px;
+  transition: all 200ms var(--ease-soft);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.check-btn:hover {
+  border-color: var(--accent-moss);
+  background: rgba(107,140,90,0.1);
+}
+.task.done .check-btn {
+  background: var(--accent-moss);
+  border-color: var(--accent-moss);
+  color: white;
+}
+
+.task-content { flex: 1; min-width: 0; }
+.task-title {
+  font-weight: 400;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+}
+.task-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+.task-links { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.task-link {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  display: inline-block;
+  transition: background 160ms;
+}
+.task-link.terra {
+  background: rgba(193,122,84,0.12);
+  color: var(--accent-terra);
+}
+.task-link.terra:hover { background: rgba(193,122,84,0.26); }
+.task-link.moss {
+  background: rgba(107,140,90,0.12);
+  color: var(--accent-moss);
+}
+.task-link.moss:hover { background: rgba(107,140,90,0.26); }
+.task-link.slate {
+  background: rgba(107,87,68,0.1);
+  color: var(--text-secondary);
+}
+.task-link.slate:hover { background: rgba(107,87,68,0.2); }
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: rgba(44,36,22,0.07);
+  color: var(--text-muted);
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+/* Phase number accent colors */
+.phase:nth-child(1) .phase-number { background: rgba(193,122,84,0.15); color: var(--accent-terra); }
+.phase:nth-child(2) .phase-number { background: rgba(107,140,90,0.15); color: var(--accent-moss); }
+.phase:nth-child(3) .phase-number { background: rgba(155,174,140,0.2); color: #547044; }
+.phase:nth-child(4) .phase-number { background: rgba(193,122,84,0.1); color: var(--accent-clay); }
+.phase:nth-child(5) .phase-number { background: rgba(107,87,68,0.1); color: var(--text-secondary); }
+.phase:nth-child(6) .phase-number { background: rgba(44,36,22,0.12); color: var(--text-primary); }
+
+.tip-box {
+  margin-top: 20px;
+  padding: 15px 20px;
+  background: rgba(107,140,90,0.08);
+  border-left: 3px solid var(--accent-moss);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.tip-box strong { color: var(--accent-moss); font-weight: 700; }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--bg-elevated);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  header { padding: 28px 24px; }
+  h1 { font-size: 2rem; }
+  main { padding: 28px 20px 60px; }
+  .phase-header { padding: 20px; }
+  .phase-body { padding: 0 20px 24px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner animate-in">
+    <div class="eyebrow">Persoonlijk leerpad · 2025–2026</div>
+    <h1>AI voor de <em>data analist</em></h1>
+    <p class="subtitle">Een concreet stappenplan met opdrachten en actuele bronnen — van LLM-begrip tot het bouwen van je eerste AI agent, zonder ML-achtergrond.</p>
+    <div class="progress-bar-wrap delay-2 animate-in">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="progress-label" id="progressLabel">0 / 28 voltooid</span>
+    </div>
+    <p class="usage-hint">○ Klik het rondje links van een opdracht om het af te vinken &nbsp;·&nbsp; Klik de titel van een fase om uit te klappen</p>
+  </div>
+</header>
+
+<main>
+
+<!-- FASE 1 -->
+<div class="phase open animate-in delay-1">
+  <div class="phase-header" onclick="togglePhase(this)">
+    <div class="phase-number">1</div>
+    <div class="phase-meta">
+      <div class="phase-title">Begrijp hoe AI & LLMs werken</div>
+      <div class="phase-duration">Week 1–3 · conceptueel fundament</div>
+    </div>
+    <div class="phase-chevron">▾</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Voordat je AI gaat inzetten, wil je snappen wat er onder de motorkap zit — niet als wiskundige, maar als iemand die wil begrijpen waarom een LLM soms hallucineert, wat een context window is, en waarom prompt-formulering zo cruciaal is.</p>
+    <div class="tasks">
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Cursus: Elements of AI <span class="badge">Univ. Helsinki · gratis · NL</span></div>
+          <div class="task-desc">De beste niet-technische AI-introductie die er is, nu ook beschikbaar in het Nederlands. Behandelt wat AI is, machine learning, neurale netwerken en ethiek. Op eigen tempo, geen wiskundige achtergrond nodig. Meer dan 2 miljoen studenten wereldwijd.</div>
+          <div class="task-links">
+            <a href="https://www.elementsofai.com/nl" target="_blank" class="task-link terra">→ elementsofai.com (NL)</a>
+            <a href="https://buildingai.elementsofai.com" target="_blank" class="task-link moss">→ Building AI (vervolg)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Cursus: AI for Everyone — Andrew Ng <span class="badge">Coursera · gratis</span></div>
+          <div class="task-desc">Niet-technische cursus (±6 uur) die uitlegt wat AI kan en niet kan, hoe je AI-projecten aanpakt, en wat de zakelijke impact is. Gratis te auditen. Andrew Ng is de bekendste AI-docent ter wereld en houdt de toon toegankelijk.</div>
+          <div class="task-links">
+            <a href="https://www.coursera.org/learn/ai-for-everyone" target="_blank" class="task-link terra">→ Coursera (gratis auditen)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Video: But what is a neural network? — 3Blue1Brown</div>
+          <div class="task-desc">De beste visuele uitleg van neurale netwerken die bestaat. Geen enkele technische achtergrond nodig — alles wordt met animaties uitgelegd. Bekijk de eerste 3 video's van de serie voor een solide visueel fundament.</div>
+          <div class="task-links">
+            <a href="https://www.youtube.com/watch?v=aircAruvnKk" target="_blank" class="task-link terra">▶ YouTube serie</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box"><strong>💡 Tip:</strong> Gebruik Claude als studie-assistent terwijl je deze cursussen doorloopt. Stel vragen als: "Wat is het verschil tussen een LLM en een traditioneel ML-model?" of "Leg mij hallucination uit alsof ik data analist ben." Zo verdiep je begrip actief.</div>
+  </div>
+</div>
+
+<!-- FASE 2 -->
+<div class="phase animate-in delay-2">
+  <div class="phase-header" onclick="togglePhase(this)">
+    <div class="phase-number">2</div>
+    <div class="phase-meta">
+      <div class="phase-title">Prompt engineering als vaardigheid</div>
+      <div class="phase-duration">Week 3–5 · directe impact op je werk</div>
+    </div>
+    <div class="phase-chevron">▾</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Goede prompts schrijven is een echte vaardigheid — zeker als data analist die wil werken met gestructureerde output. Leer hoe je AI instrueert zodat de output direct bruikbaar is in jouw werkproces.</p>
+    <div class="tasks">
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Lees: Anthropic Prompt Engineering Guide <span class="badge">Anthropic · 2025</span></div>
+          <div class="task-desc">De officiële documentatie van Anthropic over effectief prompts bouwen voor Claude. Behandelt chain-of-thought redeneren, XML-structuur, few-shot voorbeelden, en output-formatting. Actueel en praktisch.</div>
+          <div class="task-links">
+            <a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" class="task-link terra">→ docs.anthropic.com</a>
+            <a href="https://claude.com/blog/best-practices-for-prompt-engineering" target="_blank" class="task-link moss">→ Claude blog: Best Practices</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Interactief: Anthropic Prompt Engineering Tutorial <span class="badge">Anthropic · GitHub</span></div>
+          <div class="task-desc">Hands-on tutorial rechtstreeks van Anthropic — doorloop de oefeningen in volgorde. Je leert prompts iteratief verbeteren met directe feedback. Beschikbaar als Jupyter Notebook (aanbevolen als je Python al hebt) of als Google Sheets versie.</div>
+          <div class="task-links">
+            <a href="https://github.com/anthropics/prompt-eng-interactive-tutorial" target="_blank" class="task-link terra">→ GitHub Tutorial</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Opdracht: Schrijf een prompt die jouw SQL-werk analyseert</div>
+          <div class="task-desc">Pak een echte SQL-query van je werk. Schrijf een prompt die Claude vraagt om: (1) de query stap voor stap uit te leggen, (2) verbeteringen voor te stellen, en (3) de output te formatteren als een gestructureerd rapport. Itereer de prompt tot het resultaat bruikbaar is.</div>
+          <div class="task-links">
+            <a href="https://claude.ai" target="_blank" class="task-link terra">→ Claude.ai</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Opdracht: Bouw een persoonlijke prompt-bibliotheek</div>
+          <div class="task-desc">Maak een document waar je jouw beste prompts opslaat per gebruik: SQL-analyse, data-samenvatting, rapportage, e-mail schrijven. Begin klein. Na een maand heb je een waardevolle persoonlijke gereedschapskist die groeit met je ervaring.</div>
+          <div class="task-links">
+            <a href="https://www.notion.so" target="_blank" class="task-link slate">→ Notion (gratis)</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box"><strong>💡 Tip:</strong> Anthropic biedt ook een gestructureerde prompting cursus aan via <strong>anthropic.skilljar.com</strong> — vermeld in de officiële docs als de plek om prompting serieus te oefenen met toetsvragen en feedback.</div>
+  </div>
+</div>
+
+<!-- FASE 3 -->
+<div class="phase animate-in delay-3">
+  <div class="phase-header" onclick="togglePhase(this)">
+    <div class="phase-number">3</div>
+    <div class="phase-meta">
+      <div class="phase-title">Python basics voor AI-gebruik</div>
+      <div class="phase-duration">Week 5–9 · de toegangspoort</div>
+    </div>
+    <div class="phase-chevron">▾</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Je hoeft geen Python-ontwikkelaar te worden. Maar als je een API kunt aanroepen en JSON kunt verwerken, gaan er enorm veel deuren open. Je kent SQL al — de logica van "data ophalen, verwerken, outputten" is vergelijkbaar.</p>
+    <div class="tasks">
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Installeer Python + Jupyter via Anaconda</div>
+          <div class="task-desc">Anaconda geeft je Python, Jupyter én pandas in één installatie. Jupyter is ideaal voor experimenteren: je draait code stap voor stap en ziet het resultaat direct — net als een interactieve rekenmachine voor data.</div>
+          <div class="task-links">
+            <a href="https://www.anaconda.com/download" target="_blank" class="task-link terra">→ Anaconda download (gratis)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Cursus: Python for Everybody — University of Michigan <span class="badge">Coursera · gratis</span></div>
+          <div class="task-desc">De klassieke Python-instap cursus voor beginners. Gratis te auditen. Je hoeft niet de hele specialisatie te doen — de eerste twee modules (variabelen, functies, loops, bestanden) zijn al genoeg om door te gaan naar AI-gebruik.</div>
+          <div class="task-links">
+            <a href="https://www.coursera.org/specializations/python" target="_blank" class="task-link terra">→ Coursera (gratis)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Opdracht: Roep de Claude API aan vanuit Python <span class="badge">Anthropic</span></div>
+          <div class="task-desc">Installeer de Anthropic SDK (<code>pip install anthropic</code>), maak een API-sleutel aan op console.anthropic.com, en stuur je eerste bericht via Python. Verwerk het antwoord en druk het af. Dit is het technische fundament van alles wat volgt.</div>
+          <div class="task-links">
+            <a href="https://docs.anthropic.com/en/api/getting-started" target="_blank" class="task-link terra">→ Anthropic API docs</a>
+            <a href="https://console.anthropic.com" target="_blank" class="task-link moss">→ API key aanmaken</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Mini-project: Laat AI een CSV analyseren</div>
+          <div class="task-desc">Pak een CSV van je werk (anonimiseer indien nodig). Lees het in met pandas, stuur een samenvatting naar de Claude API, en druk de AI-analyse af in een leesbaar formaat. Je eerste echte AI + data-integratie — direct toepasbaar in je werk.</div>
+          <div class="task-links">
+            <a href="https://pandas.pydata.org/docs/getting_started/index.html" target="_blank" class="task-link terra">→ pandas quickstart</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box"><strong>💡 Tip:</strong> Gebruik Claude om je Python-code te debuggen terwijl je leert. Plak een foutmelding in Claude en vraag: "Leg uit wat er fout gaat en hoe ik dit oplossen kan." Je oefent zo Python én prompting tegelijk.</div>
+  </div>
+</div>
+
+<!-- FASE 4 -->
+<div class="phase animate-in delay-4">
+  <div class="phase-header" onclick="togglePhase(this)">
+    <div class="phase-number">4</div>
+    <div class="phase-meta">
+      <div class="phase-title">AI Agents begrijpen & bouwen</div>
+      <div class="phase-duration">Week 9–13 · het kernonderwerp</div>
+    </div>
+    <div class="phase-chevron">▾</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Een AI agent is een LLM die tools kan gebruiken (databases, API's, bestanden) en zelfstandig meerdere stappen kan plannen. Dit is de meest relevante ontwikkeling voor data analisten — een agent die zelf queries schrijft, resultaten beoordeelt en een rapport genereert.</p>
+    <div class="tasks">
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Lees: Building Effective Agents <span class="badge">Anthropic · 2024</span></div>
+          <div class="task-desc">Het essentiële artikel van Anthropic over hoe je goede AI agents bouwt — welke patronen werken, wanneer je agents inzet versus eenvoudigere oplossingen, en welke valkuilen te vermijden. Rechtstreeks van de makers van Claude, geschreven voor een technisch publiek zonder ML-achtergrond.</div>
+          <div class="task-links">
+            <a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" class="task-link terra">→ anthropic.com</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Visueel starten: maak kennis met n8n <span class="badge">geen code nodig</span></div>
+          <div class="task-desc">n8n is een visuele workflow-tool waarmee je AI-agents kunt bouwen zonder te programmeren. Perfect als eerste kennismaking met het concept van "input → beslissing → actie." Probeer de gratis cloud-versie en koppel een LLM aan een simpele automatisering.</div>
+          <div class="task-links">
+            <a href="https://n8n.io" target="_blank" class="task-link terra">→ n8n.io</a>
+            <a href="https://docs.n8n.io/courses/level-one/" target="_blank" class="task-link moss">→ n8n cursus (gratis)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Cursus: Agentic AI — Andrew Ng <span class="badge">DeepLearning.AI · 2025</span></div>
+          <div class="task-desc">Korte praktische cursus over het bouwen van agentic AI-systemen: reflection (AI die zijn eigen werk beoordeelt), tool use, planning en multi-agent samenwerking. Gratis. Geeft je echt inzicht in hoe agents werken aan de hand van concrete code-voorbeelden.</div>
+          <div class="task-links">
+            <a href="https://learn.deeplearning.ai/courses/agentic-ai/information" target="_blank" class="task-link terra">→ DeepLearning.AI (gratis)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Lees: Effective Context Engineering for AI Agents <span class="badge">Anthropic Engineering · 2025</span></div>
+          <div class="task-desc">Anthropic's eigen verdieping op hoe agents optimaal gebruik maken van hun context-window — de volgende stap na prompt engineering. Legt uit waarom "context engineering" de nieuwe vaardigheid is voor iedereen die met agents bouwt.</div>
+          <div class="task-links">
+            <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" class="task-link terra">→ anthropic.com/engineering</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Mini-project: Bouw een "data-analist agent"</div>
+          <div class="task-desc">Maak een Python-script (of n8n-flow) waar je een vraag in gewone taal stelt over een dataset. De agent genereert zelf een SQL-query, voert die uit op een lokale SQLite database, en vat de uitkomst samen in begrijpelijke taal. Dit is een realistisch scenario voor jouw dagelijks werk.</div>
+          <div class="task-links">
+            <a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview" target="_blank" class="task-link terra">→ Anthropic Tool Use docs</a>
+            <a href="https://www.sqlite.org/index.html" target="_blank" class="task-link moss">→ SQLite (lokale database)</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box"><strong>💡 Tip:</strong> Begin met n8n als je nog weinig Python-ervaring hebt. Zodra je in n8n ziet hoe de stroom input → beslissing → actie → output werkt, is de vertaling naar Python-code veel logischer en kleiner dan het lijkt.</div>
+  </div>
+</div>
+
+<!-- FASE 5 -->
+<div class="phase animate-in delay-4">
+  <div class="phase-header" onclick="togglePhase(this)">
+    <div class="phase-number">5</div>
+    <div class="phase-meta">
+      <div class="phase-title">RAG & AI op jouw eigen data</div>
+      <div class="phase-duration">Week 13–17 · het verschil maken</div>
+    </div>
+    <div class="phase-chevron">▾</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">RAG (Retrieval-Augmented Generation) is de techniek waarmee je een LLM toegang geeft tot jouw eigen data — documenten, databases, interne rapporten. Als data analist ga je hier zeker mee te maken krijgen. Dit is hoe bedrijven AI écht productief gaan inzetten.</p>
+    <div class="tasks">
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Cursus: AI Agents in LangGraph <span class="badge">DeepLearning.AI · 2024</span></div>
+          <div class="task-desc">Praktische cursus (±3 uur) over het bouwen van agents met LangGraph — inclusief state management, geheugen over meerdere gesprekken en human-in-the-loop controle. Directe toepassing voor data-analyse workflows. Gratis.</div>
+          <div class="task-links">
+            <a href="https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/" target="_blank" class="task-link terra">→ DeepLearning.AI (gratis)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Lees: What is RAG? <span class="badge">IBM · 2024</span></div>
+          <div class="task-desc">Heldere introductie op RAG zonder code. Begrijp de kerngedachte: een LLM weet niet alles, dus we geven hem real-time toegang tot een zoeksysteem op jouw eigen data. Het fundament van bijna elke bedrijfs-AI-toepassing.</div>
+          <div class="task-links">
+            <a href="https://www.ibm.com/topics/retrieval-augmented-generation" target="_blank" class="task-link terra">→ IBM: What is RAG?</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Mini-project: Chatbot op een intern document</div>
+          <div class="task-desc">Neem een PDF of tekstbestand (bijv. een intern rapport of handleiding van je werk). Bouw met LlamaIndex een eenvoudige chatbot die in gewone taal vragen beantwoordt over dat document. Dit is RAG in zijn eenvoudigste vorm — en meteen bruikbaar.</div>
+          <div class="task-links">
+            <a href="https://docs.llamaindex.ai/en/stable/getting_started/starter_example/" target="_blank" class="task-link terra">→ LlamaIndex quickstart</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Verdieping: Tableau AI verkennen <span class="badge">Tableau · 2024</span></div>
+          <div class="task-desc">Tableau heeft steeds meer ingebouwde AI-functies: Tableau Pulse, AI-gegenereerde inzichten en Ask Data. Bekijk wat er nu beschikbaar is en hoe het aansluit op je bestaande Tableau-werk. Zo zie je hoe AI en je huidige toolstack samenkomen.</div>
+          <div class="task-links">
+            <a href="https://www.tableau.com/products/tableau-ai" target="_blank" class="task-link terra">→ Tableau AI</a>
+            <a href="https://help.tableau.com/current/pro/desktop/en-us/ask_data.htm" target="_blank" class="task-link moss">→ Ask Data</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Blijf bij: Anthropic Engineering Blog <span class="badge">Anthropic · actueel</span></div>
+          <div class="task-desc">Houd de Anthropic Engineering Blog bij voor de nieuwste ontwikkelingen — van agent-patronen tot praktische implementatiegidsen. Geschreven door de engineers die Claude bouwen. Nieuwe, inhoudelijke artikelen verschijnen regelmatig en zijn goed leesbaar zonder ML-achtergrond.</div>
+          <div class="task-links">
+            <a href="https://www.anthropic.com/engineering" target="_blank" class="task-link terra">→ anthropic.com/engineering</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box"><strong>💡 Tip:</strong> Na fase 5 ben je in staat om op je werk concrete AI-toepassingen voor te stellen en uit te leggen. Denk aan: "We kunnen collega's in gewone taal vragen laten stellen over onze data-rapportages." Dat is een voorstel dat je nu kunt onderbouwen én zelf bouwen.</div>
+  </div>
+</div>
+
+
+<!-- FASE 6 -->
+<div class="phase animate-in delay-4">
+  <div class="phase-header" onclick="togglePhase(this)">
+    <div class="phase-number">6</div>
+    <div class="phase-meta">
+      <div class="phase-title">Vibe coding met Claude Code</div>
+      <div class="phase-duration">Week 17–22 · van idee naar werkende app</div>
+    </div>
+    <div class="phase-chevron">▾</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Vibe coding is het bouwen van werkende applicaties door gewoon in gewone taal te beschrijven wat je wilt — zonder zelf code te schrijven. Claude Code is het gereedschap van Anthropic dat dit mogelijk maakt: het leest je projectmap, schrijft bestanden, voert commando's uit en debugt zelfstandig. Voor een data analist betekent dit: van idee tot werkende tool in een middag, in plaats van weken. De platforms Netlify, Cloudflare en Supabase zijn de infrastructuur waarop je die apps publiceert en draait.</p>
+    <div class="tasks">
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Installeer & verken Claude Code <span class="badge">Anthropic · 2025</span></div>
+          <div class="task-desc">Claude Code werkt als een CLI-tool in je terminal — het ziet je hele projectmap en werkt autonoom. Installeer het via <code>npm install -g @anthropic-ai/claude-code</code>, open een leeg project en geef je eerste instructie in gewone taal. De officiële docs begeleiden je stap voor stap.</div>
+          <div class="task-links">
+            <a href="https://code.claude.com/docs/en/overview" target="_blank" class="task-link terra">→ Claude Code docs</a>
+            <a href="https://claude.ai/code" target="_blank" class="task-link moss">→ Claude Code web (geen installatie)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Lees: Vibe Coding Best Practices Guide <span class="badge">Anthropic artifact · 2025</span></div>
+          <div class="task-desc">Anthropic's eigen gids over hoe je effectief vibe codet met Claude Code: hoe je instructies structureert, wanneer je ingrijpt, en hoe je voorkomt dat Claude "off the rails" gaat. Essentieel voordat je serieus begint.</div>
+          <div class="task-links">
+            <a href="https://claudelog.com/faqs/what-is-vibe-coding/" target="_blank" class="task-link terra">→ Vibe Coding gids (ClaudeLog)</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Mini-project: Bouw een data-dashboard in één sessie</div>
+          <div class="task-desc">Maak een leeg project-mapje. Open Claude Code. Beschrijf in gewone taal wat je wilt: "Bouw een HTML-pagina die een CSV-bestand inleest en de data weergeeft als grafiek." Laat Claude het volledig uitwerken. Observeer hoe het denkt en bestanden aanmaakt. Grijp in wanneer het de verkeerde kant opgaat.</div>
+          <div class="task-links">
+            <a href="https://cgstrategylab.com/detailed-claude-code-vibe-coding-guide/" target="_blank" class="task-link terra">→ Complete beginner-gids Claude Code</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Platform: Netlify — je app online zetten in één klik <span class="badge">gratis tier</span></div>
+          <div class="task-desc">Netlify is de eenvoudigste manier om een app die Claude Code heeft gebouwd, online te zetten. Koppel je GitHub-repository en elke nieuwe versie die je pusht wordt automatisch gepubliceerd. Gratis tier is ruim genoeg voor persoonlijke projecten en prototypes. Claude Code kent Netlify's configuratie en kan de <code>netlify.toml</code> voor je schrijven.</div>
+          <div class="task-links">
+            <a href="https://netlify.com" target="_blank" class="task-link terra">→ netlify.com (gratis)</a>
+            <a href="https://docs.netlify.com" target="_blank" class="task-link moss">→ Netlify docs</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Platform: Cloudflare Pages & Workers — sneller en globaal <span class="badge">gratis tier</span></div>
+          <div class="task-desc">Cloudflare Pages is een alternatief voor Netlify — met dezelfde eenvoud maar gebouwd op Cloudflare's wereldwijde netwerk (300+ locaties). Cloudflare Workers voegt serverless backend-logica toe. Ideaal als je app ook API-calls doet of data transformeert. Combineer met Supabase voor een volledige gratis stack.</div>
+          <div class="task-links">
+            <a href="https://pages.cloudflare.com" target="_blank" class="task-link terra">→ Cloudflare Pages</a>
+            <a href="https://workers.cloudflare.com" target="_blank" class="task-link moss">→ Cloudflare Workers</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Platform: Supabase — database + auth voor je app <span class="badge">gratis tier · PostgreSQL</span></div>
+          <div class="task-desc">Supabase geeft je een volledige PostgreSQL-database, gebruikersauthenticatie, bestandsopslag en realtime updates — allemaal via een eenvoudige API. Als data analist herken je de SQL-laag meteen. Claude Code weet hoe Supabase werkt en kan de koppeling voor je schrijven. Werkt naadloos samen met zowel Netlify als Cloudflare.</div>
+          <div class="task-links">
+            <a href="https://supabase.com" target="_blank" class="task-link terra">→ supabase.com (gratis)</a>
+            <a href="https://supabase.com/docs" target="_blank" class="task-link moss">→ Supabase docs</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="task">
+        <button class="check-btn" onclick="toggleTask(this)">✓</button>
+        <div class="task-content">
+          <div class="task-title">Eindproject: Bouw en publiceer een volledige data-tool</div>
+          <div class="task-desc">Combineer alles: gebruik Claude Code om een werkende webapp te bouwen die data opslaat in Supabase, gepubliceerd wordt via Netlify of Cloudflare, en een eenvoudige interface heeft. Denk aan een intern rapportage-dashboard, een formulier dat data opslaat, of een tool die CSV-uploads analyseert. Je hebt de hele stack nu in handen.</div>
+          <div class="task-links">
+            <a href="https://developers.cloudflare.com/workers/databases/third-party-integrations/supabase/" target="_blank" class="task-link terra">→ Cloudflare + Supabase integratie</a>
+            <a href="https://docs.netlify.com/extend/install-and-use/setup-guides/supabase-integration/" target="_blank" class="task-link moss">→ Netlify + Supabase integratie</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="tip-box"><strong>💡 Tip:</strong> Maak altijd een <code>CLAUDE.md</code> bestand in je projectmap — dit is Claude Code's "geheugen" voor dat project. Schrijf daarin: welk framework je gebruikt, wat de stijlrichtlijnen zijn, en wat Claude <em>niet</em> mag aanpassen. Dit voorkomt de meeste "off the rails" situaties en maakt elke sessie consistenter.</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function togglePhase(header) {
+  header.closest('.phase').classList.toggle('open');
+}
+
+function toggleTask(btn) {
+  // Only the check button triggers this — links are independent
+  btn.closest('.task').classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all  = document.querySelectorAll('.task');
+  const done = document.querySelectorAll('.task.done');
+  const pct  = all.length ? Math.round((done.length / all.length) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${done.length} / ${all.length} voltooid`;
+}
+
+updateProgress();
+</script>
+</body>
+</html>
